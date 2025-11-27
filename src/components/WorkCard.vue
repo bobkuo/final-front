@@ -99,8 +99,6 @@ import { useUserStore } from 'src/stores/user'
 const $q = useQuasar()
 const userStore = useUserStore()
 
-const { project } = toRefs(props)
-
 const props = defineProps({
   project: {
     type: Object,
@@ -122,6 +120,8 @@ const props = defineProps({
     default: false,
   },
 })
+
+const { project, isReverse } = toRefs(props)
 
 // 圖片對話框狀態
 const showImageDialog = ref(false)

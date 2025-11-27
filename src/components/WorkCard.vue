@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, toRefs } from 'vue'
 import { gsap } from 'gsap'
 import { useQuasar } from 'quasar'
 import { useShare } from '@vueuse/core'
@@ -98,6 +98,8 @@ import { useUserStore } from 'src/stores/user'
 
 const $q = useQuasar()
 const userStore = useUserStore()
+
+const { project } = toRefs(props)
 
 const props = defineProps({
   project: {
@@ -140,8 +142,8 @@ const shareUrl = computed(() => {
 })
 
 const { share, isSupported } = useShare({
-  title: `${props.project.title} - Judy的創作世界`,
-  text: `來看看 Judy 的作品：${props.project.description}`,
+  title: `${project.value.title} - Judy的創作世界`,
+  text: `來看看 Judy 的作品：${project.value.description}`,
   url: shareUrl.value,
 })
 

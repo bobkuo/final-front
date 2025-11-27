@@ -140,8 +140,8 @@ const shareUrl = computed(() => {
 })
 
 const { share, isSupported } = useShare({
-  title: computed(() => `${props.project.title} - Judy的創作世界`),
-  text: computed(() => `來看看 Judy 的作品：${props.project.description}`),
+  title: `${props.project.title} - Judy的創作世界`,
+  text: `來看看 Judy 的作品：${props.project.description}`,
   url: shareUrl.value,
 })
 

@@ -92,6 +92,7 @@
 import { ref, computed } from 'vue'
 import { gsap } from 'gsap'
 import { useQuasar } from 'quasar'
+import { useShare } from '@vueuse/core'
 import userService from 'src/services/user'
 import { useUserStore } from 'src/stores/user'
 
@@ -133,139 +134,76 @@ const closeImageDialog = () => {
   showImageDialog.value = false
 }
 
+// 🔗 使用 VueUse 的 useShare
+const shareUrl = computed(() => {
+  return `${window.location.origin}${window.location.pathname}#/work#project-${props.project.id}`
+})
+
+const { share, isSupported } = useShare({
+  title: computed(() => `${props.project.title} - Judy的創作世界`),
+  text: computed(() => `來看看 Judy 的作品：${props.project.description}`),
+  url: shareUrl,
+})
+
 // 🔗 分享功能
 const shareProject = async () => {
-  // 生成錨點連結到 WorkPage
-  const shareUrl = `${window.location.origin}${window.location.pathname}#/work#project-${props.project.id}`
-  // const shareData = {
-  //   title: `${props.project.title} - Judy的創作世界`,
-  //   text: `來看看 Judy 的作品：${props.project.description}`,
-  //   url: shareUrl,
-  // }
-
-  try {
-    showShareDialog(shareUrl)
-  } catch (error) {
-    if (error.name !== 'AbortError') {
-      console.error('分享失敗:', error)
-      showShareDialog(shareUrl)
+  if (isSupported.value) {
+    try {
+      await share()
+      $q.notify({
+        type: 'positive',
+        message: '分享成功！',
+        position: 'top',
+        timeout: 2000,
+        icon: 'share',
+      })
+    } catch (error) {
+      // 用戶取消分享
+      if (error.name !== 'AbortError') {
+        console.error('分享失敗:', error)
+        fallbackShare()
+      }
     }
+  } else {
+    // 瀏覽器不支援 Web Share API，使用備用方案
+    fallbackShare()
   }
 }
 
-// 顯示分享選項對話框
-const showShareDialog = (shareUrl) => {
-  // const shareText = `來看看 Judy 的作品：${props.project.title}`
-
-  // $q.dialog({
-  //   title: '分享作品',
-  //   message: '選擇分享方式',
-  //   options: {
-  //     type: 'radio',
-  //     model: 'copy',
-  //     items: [
-  //       { label: '複製連結', value: 'copy', icon: 'content_copy' },
-  //       { label: '分享到 Facebook', value: 'facebook', icon: 'facebook' },
-  //       { label: '分享到 LINE', value: 'line', icon: 'chat' },
-  //     ],
-  //   },
-  //   ok: '分享',
-  //   cancel: '取消',
-  //   persistent: true,
-  // }).onOk((shareMethod) => {
-  //   handleShare(shareMethod, shareUrl, shareText)
-  // })
-
-  handleShare('copy', shareUrl)
-}
-
-// 🔧 現代化的複製到剪貼簿函數
-const copyToClipboard = async (text) => {
+// 🔧 備用分享方案（複製連結）
+const fallbackShare = async () => {
   try {
-    // 方法 1: 使用現代 Clipboard API（推薦）
     if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text)
-      return true
+      await navigator.clipboard.writeText(shareUrl.value)
+      $q.notify({
+        type: 'positive',
+        message: '連結已複製到剪貼簿！',
+        position: 'top',
+        timeout: 2000,
+        icon: 'content_copy',
+      })
+    } else {
+      // 如果複製功能也不支援，顯示連結讓用戶手動複製
+      $q.dialog({
+        title: '手動複製連結',
+        message: '請手動複製以下連結：',
+        prompt: {
+          model: shareUrl.value,
+          type: 'text',
+          readonly: true,
+        },
+        ok: '關閉',
+        persistent: true,
+      })
     }
-
-    // 方法 2: 使用 document.execCommand（較舊的瀏覽器支援）
-
-    // 方法 3: 最後備用方案
-    throw new Error('複製功能不受支援')
   } catch (error) {
     console.error('複製失敗:', error)
-    return false
-  }
-}
-
-// 處理不同的分享方式
-const handleShare = async (method, url) => {
-  switch (method) {
-    case 'copy': {
-      const copySuccess = await copyToClipboard(url)
-
-      if (copySuccess) {
-        $q.notify({
-          type: 'positive',
-          message: '連結已複製到剪貼簿！',
-          position: 'top',
-          timeout: 2000,
-          icon: 'content_copy',
-        })
-      } else {
-        // 如果複製失敗，顯示連結讓用戶手動複製
-        $q.dialog({
-          title: '手動複製連結',
-          message: '請手動複製以下連結：',
-          prompt: {
-            model: url,
-            type: 'text',
-            readonly: true,
-          },
-          ok: '關閉',
-          persistent: true,
-        })
-      }
-      break
-    }
-
-    case 'facebook':
-      window.open(
-        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-        '_blank',
-        'width=600,height=400,scrollbars=yes,resizable=yes',
-      )
-      $q.notify({
-        type: 'info',
-        message: '正在開啟 Facebook 分享...',
-        position: 'top',
-        timeout: 2000,
-        icon: 'facebook',
-      })
-      break
-
-    case 'line':
-      window.open(
-        `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`,
-        '_blank',
-        'width=600,height=400,scrollbars=yes,resizable=yes',
-      )
-      $q.notify({
-        type: 'info',
-        message: '正在開啟 LINE 分享...',
-        position: 'top',
-        timeout: 2000,
-        icon: 'chat',
-      })
-      break
-
-    default:
-      $q.notify({
-        type: 'negative',
-        message: '未知的分享方式',
-        position: 'top',
-        timeout: 2000,
-      })
+    $q.notify({
+      type: 'negative',
+      message: '無法複製連結',
+      position: 'top',
+      timeout: 2000,
+    })
   }
 }
 

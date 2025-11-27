@@ -17,6 +17,7 @@
   "dependencies": {
     "@boindil/vue-file-agent-next": "^1.0.5",
     "@quasar/extras": "^1.16.4",
+    "@vueuse/core": "^14.1.0",
     "axios": "^1.11.0",
     "gsap": "^3.13.0",
     "pinia": "^3.0.1",

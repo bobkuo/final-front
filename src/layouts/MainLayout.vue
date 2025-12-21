@@ -66,6 +66,7 @@
       </div>
     </q-drawer>
 
+    <!-- 主要內容區域 -->
     <q-page-container>
       <router-view :key="$route.fullPath" />
       <!-- 購物車浮動按鈕 -->
@@ -91,9 +92,11 @@
         </q-btn>
       </q-page-sticky>
     </q-page-container>
+
     <!-- footer -->
     <q-footer class="bg-judy-2 text-black">
       <q-toolbar>
+        <!-- 社群連結 icon -->
         <div class="absolute-top-left">
           <q-btn
             v-for="social in SocialLinks"
@@ -108,7 +111,7 @@
             :aria-label="`追蹤我們的 ${social.name}`"
           />
         </div>
-
+        <!-- 版權 -->
         <q-toolbar-title class="text-subtitle2 text-center">
           <div>© 2025 Judy Wang Art. All rights reserved.</div>
           <div>Website by BobKuo</div>

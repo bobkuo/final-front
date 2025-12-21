@@ -347,8 +347,6 @@ const toggleGood = async () => {
 
 <style scoped lang="scss">
 .project-item {
-  margin: 0px 100px;
-
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;

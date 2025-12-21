@@ -4,7 +4,7 @@
       <q-toolbar class="q-pl-xs toolbar-content">
         <!-- Logo 區域 -->
         <q-toolbar-title class="logo-section">
-          <q-btn flat to="/" class="logo-btn">
+          <q-btn flat dense to="/" class="logo-btn">
             <q-avatar class="logo-avatar">
               <img src="~assets/logo.png" alt="logo" />
             </q-avatar>
@@ -12,9 +12,23 @@
           </q-btn>
         </q-toolbar-title>
 
-        <!-- 導航選單 -->
-        <div class="nav-section q-mr-xs">
-          <q-tabs align="right" class="nav-tabs" active-color="judy-7" indicator-color="judy-6">
+        <!-- 導航選單區域 -->
+        <div class="q-mr-xs">
+          <!-- 小尺寸 -->
+          <q-btn-dropdown class="lt-sm" flat dense color="judy-1" text-color="judy-7" label="選單">
+            <q-list>
+              <template v-for="item in navItems" :key="item.to">
+                <q-item v-if="item.show !== false" :to="item.to" clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label>{{ item.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-list>
+          </q-btn-dropdown>
+
+          <!-- 大尺寸 -->
+          <q-tabs align="right" class="gt-xs" active-color="judy-7" indicator-color="judy-6">
             <template v-for="(item, index) in navItems" :key="item.to">
               <q-route-tab
                 v-if="item.show !== false"
@@ -95,9 +109,14 @@
 
     <!-- footer -->
     <q-footer class="bg-judy-2 text-black">
-      <q-toolbar>
+      <div>
         <!-- 社群連結 icon -->
-        <div class="absolute-top-left">
+        <div
+          class="flex flex-row justify-center"
+          :class="{
+            'absolute-top-left': $q.screen.gt.sm,
+          }"
+        >
           <q-btn
             v-for="social in SocialLinks"
             :key="social.name"
@@ -112,11 +131,11 @@
           />
         </div>
         <!-- 版權 -->
-        <q-toolbar-title class="text-subtitle2 text-center">
+        <div class="text-subtitle2 text-center">
           <div>© 2025 Judy Wang Art. All rights reserved.</div>
           <div>Website by BobKuo</div>
-        </q-toolbar-title>
-      </q-toolbar>
+        </div>
+      </div>
     </q-footer>
   </q-layout>
 </template>
@@ -218,17 +237,6 @@ const SocialLinks = ref([
 }
 
 /* 導航區域 */
-/* .nav-section {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-} */
-
-/* .nav-tabs {
-  border-radius: 16px;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 4px;
-} */
 
 .nav-tab {
   /* border-radius: 12px; */
@@ -351,18 +359,6 @@ const SocialLinks = ref([
 
 /* 響應式設計 */
 @media (max-width: 1024px) {
-  .toolbar-content {
-    gap: 16px;
-  }
-
-  /* .nav-section {
-    flex: 0;
-  } */
-
-  /* .nav-tabs {
-    display: none;
-  } */
-
   .logo-text {
     font-size: 1rem;
   }
@@ -377,10 +373,6 @@ const SocialLinks = ref([
     min-height: 64px;
     /* gap: 12px;
     padding: 0 16px; */
-  }
-
-  .logo-text {
-    display: none;
   }
 
   .user-btn {

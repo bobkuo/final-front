@@ -8,7 +8,7 @@
         <div ref="titleRef" class="text-h2 text-judy-2 intro_title title-animation">I'm Judy</div>
         <div ref="descRef" class="text-h6 about-description description-animation">
           <p>Judy Wang，畫畫和寫字的人。</p>
-          <p>相信萬物皆有靈，喜歡用圖像和文字為日常生活賦予生命力。</p>
+          <p>相信萬物皆有靈，喜歡用圖像和文字爲日常生活賦予生命力。</p>
         </div>
       </div>
     </div>

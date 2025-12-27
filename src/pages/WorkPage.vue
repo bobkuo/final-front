@@ -1,51 +1,55 @@
 <template>
   <div class="projects-section">
     <div class="container">
-      <div class="q-pa-md">
+      <div class="q-pa-md relative-position" style="min-height: 50vh">
         <!-- 載入狀態 -->
-        <div v-if="loading" class="loading-container">
-          <q-spinner size="50px" color="primary" />
-          <p class="q-mt-md">載入中...</p>
-        </div>
+        <q-inner-loading
+          :showing="loading"
+          label="載入作品中，請稍候..."
+          label-class="text-judy-7"
+          color="judy-2"
+          size="80px"
+        />
 
         <!-- Carousel -->
-        <q-carousel
-          v-else
-          v-model="slide"
-          transition-prev="slide-right"
-          transition-next="slide-left"
-          animated
-          control-color="primary"
-          class="rounded-borders"
-        >
-          <q-carousel-slide
-            v-for="series in allSeries"
-            :key="series._id"
-            :name="series._id"
-            :img-src="series.cover"
-          >
-            <div class="absolute-bottom custom-caption">
-              <div class="text-h2">{{ series.name }}</div>
-              <div class="text-subtitle1">{{ series.description }}</div>
-            </div>
-          </q-carousel-slide>
-        </q-carousel>
-
-        <!-- Carousel 控制按鈕 -->
-        <div v-if="!loading && allSeries.length > 0" class="row justify-center q-mt-md">
-          <q-btn-toggle
+        <template v-if="!loading">
+          <q-carousel
             v-model="slide"
-            :options="carouselOptions"
-            toggle-color="judy-2"
-            color="white"
-            text-color="judy-2"
-            unelevated
-          />
-        </div>
+            transition-prev="slide-right"
+            transition-next="slide-left"
+            animated
+            control-color="primary"
+            class="rounded-borders"
+          >
+            <q-carousel-slide
+              v-for="series in allSeries"
+              :key="series._id"
+              :name="series._id"
+              :img-src="series.cover"
+            >
+              <div class="absolute-bottom custom-caption">
+                <div class="text-h2">{{ series.name }}</div>
+                <div class="text-subtitle1">{{ series.description }}</div>
+              </div>
+            </q-carousel-slide>
+          </q-carousel>
+
+          <!-- Carousel 控制按鈕 -->
+          <div v-if="!loading && allSeries.length > 0" class="row justify-center q-mt-md">
+            <q-btn-toggle
+              v-model="slide"
+              :options="carouselOptions"
+              toggle-color="judy-2"
+              color="white"
+              text-color="judy-2"
+              unelevated
+            />
+          </div>
+        </template>
       </div>
 
       <!-- 顯示當前選中系列的作品 -->
-      <div v-if="currentSeries" class="row justify-center">
+      <div v-if="!loading && currentSeries" class="row justify-center">
         <div class="col-12">
           <h2 class="section-title">{{ currentSeries.name }} - 作品集</h2>
         </div>
